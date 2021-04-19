@@ -1,0 +1,4 @@
+- name: Install requirements
+  apt:
+    name: [python3-docker, python3-passlib]
+    state: present

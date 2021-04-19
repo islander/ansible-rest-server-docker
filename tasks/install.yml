@@ -1,0 +1,39 @@
+---
+- name: Make config dir
+  file:
+    path: /etc/rest-server
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+  become: yes
+
+- name: Add example user to a password file and ensure permissions are set
+  htpasswd:
+    path: /etc/rest-server/.htpasswd
+    name: admin
+    password: '9s36?;fyNp'
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Create a network
+  docker_network:
+    name: rest-server-net
+
+- name: Create rest-server container
+  docker_container:
+    name: restserver
+    image: restic/rest-server:0.10.0
+    ports:
+      - "127.0.0.1:8010:8000"
+    recreate: yes
+    env:
+      DISABLE_AUTHENTICATION: "1"
+      OPTIONS: "--prometheus"
+    purge_networks: yes
+    volumes:
+      - data:/data
+      - /etc/rest-server/.htpasswd:/data/.htpasswd
+    networks:
+      - name: rest-server-net
