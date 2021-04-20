@@ -13,6 +13,7 @@
     path: /etc/rest-server/.htpasswd
     name: "{{ item.username }}"
     password: "{{ item.password }}"
+    crypt_scheme: ldap_sha1
     owner: root
     group: root
     mode: 0640
