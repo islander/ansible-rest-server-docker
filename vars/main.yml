@@ -1,2 +1,3 @@
 ---
-# vars file for restic-server-docker
+rest_server_users:
+  - { username: "admin", password: "changeme" }

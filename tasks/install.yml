@@ -8,14 +8,15 @@
     mode: '0750'
   become: yes
 
-- name: Add example user to a password file and ensure permissions are set
+- name: Add users to a password file and ensure permissions are set
   htpasswd:
     path: /etc/rest-server/.htpasswd
-    name: admin
-    password: '9s36?;fyNp'
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"
     owner: root
     group: root
     mode: 0640
+  loop: "{{ rest_server_users }}"
 
 - name: Create a network
   docker_network:
@@ -24,16 +25,16 @@
 - name: Create rest-server container
   docker_container:
     name: restserver
-    image: restic/rest-server:0.10.0
+    image: restic/rest-server:{{ rest_server_version }}
     ports:
       - "127.0.0.1:8010:8000"
     recreate: yes
     env:
       DISABLE_AUTHENTICATION: "1"
-      OPTIONS: "--prometheus"
+      OPTIONS: "{{ rest_server_options }}"
     purge_networks: yes
     volumes:
-      - data:/data
+      - "{{ rest_server_datapath }}:/data"
       - /etc/rest-server/.htpasswd:/data/.htpasswd
     networks:
       - name: rest-server-net

@@ -1,2 +1,4 @@
 ---
-# defaults file for restic-server-docker
+rest_server_version: "0.10.0"
+rest_server_options: "--prometheus"
+rest_server_datapath: "/data/rest-server"
